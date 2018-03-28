@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 ADD apt-sources /etc/apt/sources.list
 
 RUN ["apt-get", "update"]
-RUN ["apt-get", "-y", "install", "vim", "zsh", "git", "curl", "inetutils-ping", "openssh-server", "sudo"]
+RUN ["apt-get", "-y", "install", "vim", "zsh", "git", "curl", "inetutils-ping", "openssh-server", "sudo", "tmux"]
 RUN mkdir /var/run/sshd
 
 RUN ["groupadd", "greghaynes"]
