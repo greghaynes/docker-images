@@ -8,7 +8,7 @@ RUN mkdir /var/run/sshd
 
 RUN ["groupadd", "greghaynes"]
 RUN ["useradd", "-m", "greghaynes", "-g", "greghaynes", "-s", "/bin/zsh"]
-ADD sudoers /etc/sudoers
+ADD sudoers /etc/sudoers.d/greghaynes
 
 RUN ["su", "greghaynes", "-c", "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""]
 
