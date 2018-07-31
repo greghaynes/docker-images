@@ -1,4 +1,4 @@
-deb http://ubuntu.mirrors.pdxhome.greghaynes.net/ubuntu xenial main universe
-deb http://ubuntu.mirrors.pdxhome.greghaynes.net/ubuntu xenial-updates main universe
-deb http://ubuntu.mirrors.pdxhome.greghaynes.net/ubuntu xenial-backports main universe
-deb http://ubuntu.mirrors.pdxhome.greghaynes.net/ubuntu xenial-security main universe
+deb http://ubuntu.osuosl.org/ubuntu bionic main universe
+deb http://ubuntu.osuosl.org/ubuntu bionic-updates main universe
+deb http://ubuntu.osuosl.org/ubuntu bionic-backports main universe
+deb http://ubuntu.osuosl.org/ubuntu bionic-security main universe
