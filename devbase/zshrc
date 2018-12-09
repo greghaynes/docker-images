@@ -6,12 +6,12 @@ ZSH=$HOME/.oh-my-zsh
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 #ZSH_THEME="random"
-ZSH_THEME="steeef"
+ZSH_THEME="juanghurtado"
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias irc="ssh -t -p 2122 ubuntu@gregirc.greghaynes.net tmux attach"
+#alias irc="ssh -t -p 2122 ubuntu@gregirc.greghaynes.net tmux attach"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -45,3 +45,6 @@ alias tmux="tmux -2"
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
 
+export GOROOT=/usr/local/src/go
+export GOPATH=$HOME/go
+export KO_DOCKER_REPO=docker-registry.pdxhome.greghaynes.net/greghaynes-ko

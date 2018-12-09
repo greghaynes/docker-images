@@ -8,3 +8,5 @@ RUN ["apt-get", "install", "-y", "python3.6"]
 RUN ["wget", "https://bootstrap.pypa.io/get-pip.py"]
 RUN ["python3.6", "get-pip.py"]
 RUN ["pip", "install", "homeassistant"]
+
+
