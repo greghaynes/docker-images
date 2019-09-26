@@ -37,14 +37,15 @@ JIRA_RAPID_BOARD="yes"
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/home/greghaynes/bin
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/var/lib/go/bin:/home/greghaynes/bin
+export LANG=en_US.utf8
 
 alias tmux="tmux -2"
+alias vim="nvim"
 
 # Light terminal colors
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
 
-export GOROOT=/usr/local/src/go
+export GOROOT=/var/lib/go
 export GOPATH=$HOME/go
-export KO_DOCKER_REPO=docker-registry.pdxhome.greghaynes.net/greghaynes-ko

@@ -1,4 +1,6 @@
-deb http://ubuntu.osuosl.org/ubuntu bionic main universe
-deb http://ubuntu.osuosl.org/ubuntu bionic-updates main universe
-deb http://ubuntu.osuosl.org/ubuntu bionic-backports main universe
-deb http://ubuntu.osuosl.org/ubuntu bionic-security main universe
+deb http://debian.osuosl.org/debian/ buster main non-free
+
+deb http://security.debian.org/debian-security buster/updates main
+
+# buster-updates, previously known as 'volatile'
+deb http://debian.osuosl.org/debian/ buster-updates main

@@ -1,34 +1,60 @@
-FROM ubuntu:18.04
+FROM debian:buster
 
 ADD apt-sources /etc/apt/sources.list
 
 RUN ["apt-get", "update"]
-RUN ["apt-get", "-y", "install", "vim", "zsh", "git", "curl", "inetutils-ping", "openssh-server", "sudo", "tmux", "make", "build-essential", "apt-transport-https", "gnupg2"]
-RUN mkdir /var/run/sshd
+RUN ["apt-get", "-y", "install", "dialog", "locales", "bash", "zsh", "git", "curl", "inetutils-ping", "sudo", "tmux", "make", "build-essential", "apt-transport-https", "gnupg2", "python3", "python3-dev"]
+ADD locale.gen /etc/locale.gen
+RUN ["locale-gen"]
 
 RUN ["groupadd", "greghaynes"]
 RUN ["useradd", "-m", "greghaynes", "-g", "greghaynes", "-s", "/bin/zsh"]
 ADD sudoers /etc/sudoers.d/greghaynes
 
-ADD --chown=greghaynes:greghaynes authorized_keys /home/greghaynes/.ssh/authorized_keys
+# Python
+RUN ["curl", "https://bootstrap.pypa.io/get-pip.py", "-o", "/tmp/get-pip.py"]
+RUN ["python3", "/tmp/get-pip.py"]
+RUN ["rm", "/tmp/get-pip.py"]
+RUN ["pip", "install", "pipenv"]
 
-RUN ["su", "greghaynes", "-c", "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""]
+# Go
+RUN ["curl", "https://dl.google.com/go/go1.13.linux-amd64.tar.gz", "-o", "/tmp/go.tar.gz"]
+RUN ["tar", "-C", "/var/lib/", "-xvzf", "/tmp/go.tar.gz"]
+RUN ["rm", "/tmp/go.tar.gz"]
 
-RUN ["su", "greghaynes", "-c", "curl -fsSL https://raw.githubusercontent.com/greghaynes/DotFiles/master/.zshrc -o /home/greghaynes/.zshrc"]
-RUN ["su", "greghaynes", "-c", "curl -fsSL https://raw.githubusercontent.com/greghaynes/DotFiles/master/.tmux.conf -o /home/greghaynes/.tmux.conf"]
-RUN ["su", "greghaynes", "-c", "curl -fsSL https://raw.githubusercontent.com/greghaynes/DotFiles/master/.gitconfig -o /home/greghaynes/.gitconfig"]
+# NeoVim
+RUN ["curl", "-L", "https://github.com/neovim/neovim/releases/download/v0.4.2/nvim-linux64.tar.gz", "-o", "/tmp/nvim.tar.gz"]
+RUN ["mkdir", "-p", "/var/lib/neovim"]
+RUN ["tar", "-C", "/var/lib/neovim", "-xvzf", "/tmp/nvim.tar.gz"]
+RUN ["ln", "-s", "/var/lib/neovim/nvim-linux64/bin/nvim", "/usr/local/bin/nvim"]
+RUN ["rm", "/tmp/nvim.tar.gz"]
+ADD --chown=greghaynes:greghaynes init.vim /home/greghaynes/.config/nvim/init.vim
+# duoplete requires pynvim
+RUN ["pip", "install", "pynvim"]
+# vim-plug
+USER greghaynes:greghaynes
+WORKDIR /home/greghaynes
+RUN ["curl", "-fLo", "/home/greghaynes/.local/share/nvim/site/autoload/plug.vim", "--create-dirs", "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"]
+ENV GOROOT=/var/lib/go
+ENV GOPATH=/home/greghaynes/go
+ENV PATH=/bin:/usr/bin:/usr/local/bin:/var/lib/go/bin
+ADD --chown=greghaynes:greghaynes hybrid_material.vim /home/greghaynes/.config/nvim/colors/hybrid_material.vim
+RUN ["git", "clone", "https://github.com/fatih/vim-go", "/home/greghaynes/.vim/plugged/vim-go"]
+RUN ["/usr/local/bin/nvim", "-E", "+PlugInstall --sync", "+qall"]
+RUN ["/usr/local/bin/nvim", "-E", "+GoInstallBinaries", "+qall"]
 
-# Setup Vim
-RUN ["su", "greghaynes", "-c", "mkdir -p /home/greghaynes/.vim/bundle"]
-RUN ["su", "greghaynes", "-c", "git clone https://github.com/kien/ctrlp.vim.git /home/greghaynes/.vim/bundle/ctrlp.vim"]
+# Shell
+RUN ["curl", "-o", "/tmp/oh-my-zsh.sh", "-fsSL", "https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh"]
+RUN ["chmod", "+x", "/tmp/oh-my-zsh.sh"]
+RUN ["/tmp/oh-my-zsh.sh"]
+RUN ["rm", "/tmp/oh-my-zsh.sh"]
+ADD --chown=greghaynes:greghaynes zshrc /home/greghaynes/.zshrc
 
-RUN ["su", "greghaynes", "-c", "mkdir /home/greghaynes/.vim/colors"]
-RUN ["su", "greghaynes", "-c", "curl -fsSL https://raw.githubusercontent.com/altercation/vim-colors-solarized/master/colors/solarized.vim -o /home/greghaynes/.vim/colors/solarized.vim"]
+# tmux
+ADD --chown=greghaynes:greghaynes tmux.conf /home/greghaynes/.tmux.conf
 
-RUN ["su", "greghaynes", "-c", "curl -fsSL https://raw.githubusercontent.com/greghaynes/DotFiles/master/.vimrc -o /home/greghaynes/.vimrc"]
-
-RUN ["/bin/sh", "-c", "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"]
-RUN ["touch", "/etc/apt/sources.list.d/kubernetes.list"]
-RUN ["/bin/sh", "-c", "echo \"deb http://apt.kubernetes.io/ kubernetes-xenial main\" | tee -a /etc/apt/sources.list.d/kubernetes.list"]
-RUN ["apt-get", "update"]
-RUN ["apt-get", "install", "-y", "kubectl"]
+# Runner
+USER root:root
+WORKDIR /
+ADD run /app/run
+CMD ["/app/run"]
