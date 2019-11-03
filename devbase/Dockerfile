@@ -50,6 +50,9 @@ RUN ["/tmp/oh-my-zsh.sh"]
 RUN ["rm", "/tmp/oh-my-zsh.sh"]
 ADD --chown=greghaynes:greghaynes zshrc /home/greghaynes/.zshrc
 
+# Git
+ADD --chown=greghaynes:greghaynes gitconfig /home/greghaynes/.gitconfig
+
 # tmux
 ADD --chown=greghaynes:greghaynes tmux.conf /home/greghaynes/.tmux.conf
 
