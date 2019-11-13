@@ -61,3 +61,11 @@ USER root:root
 WORKDIR /
 ADD run /app/run
 CMD ["/app/run"]
+
+# Python2 and Openssh packages
+ENV DEBIAN_FRONTENT=noninteractive
+RUN ["apt-get", "-y", "install", "python", "python-dev", "openssh-server"]
+#RUN ["/usr/sbin/dpkg-reconfigure", "openssh-server"]
+RUN ["mkdir", "-p", "/var/run/sshd"]
+RUN ["sed", "-i", "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g", "/etc/ssh/sshd_config"]
+ADD --chown=greghaynes authorized_keys /home/greghaynes/.ssh/authorized_keys
